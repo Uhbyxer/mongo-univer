@@ -1,5 +1,7 @@
-/mongo-java/m101j_week1_examples/.settings
-/mongo-java/m101j_week1_examples/target
-/mongo-java/m101j_week1_examples/.classpath
-/mongo-java/m101j_week1_examples/.gitignore
-/mongo-java/m101j_week1_examples/.project
+/mongo-java/week_1/hw1-3/hw1-3/target
+/mongo-java/week_2/create_blog_authors__mongoproc_hw2.3_m101j_version_52d46451e2d423570a05ba43/create_blog_authors/.classpath
+/mongo-java/week_2/create_blog_authors__mongoproc_hw2.3_m101j_version_52d46451e2d423570a05ba43/create_blog_authors/.project
+/mongo-java/week_2/create_blog_authors__mongoproc_hw2.3_m101j_version_52d46451e2d423570a05ba43/create_blog_authors/.settings
+/mongo-java/week_2/create_blog_authors__mongoproc_hw2.3_m101j_version_52d46451e2d423570a05ba43/create_blog_authors/target/classes/META-INF/*.MF
+/mongo-java/week_2/create_blog_authors__mongoproc_hw2.3_m101j_version_52d46451e2d423570a05ba43/create_blog_authors/target/classes/course/*.class
+/week_1/hw1-3/hw1-3/target/classes/com/mongodb/*.class
