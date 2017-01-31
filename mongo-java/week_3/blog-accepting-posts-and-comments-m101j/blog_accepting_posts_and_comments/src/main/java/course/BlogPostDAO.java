@@ -1,9 +1,16 @@
 package course;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Updates;
+
 import org.bson.Document;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BlogPostDAO {
@@ -18,8 +25,8 @@ public class BlogPostDAO {
 
         // XXX HW 3.2,  Work Here
         Document post = null;
-
-
+        
+        post = postsCollection.find(new BasicDBObject("permalink", permalink)).first();
 
         return post;
     }
@@ -30,8 +37,16 @@ public class BlogPostDAO {
 
         // XXX HW 3.2,  Work Here
         // Return a list of DBObjects, each one a post from the posts collection
-        List<Document> posts = null;
-
+        List<Document> posts = new ArrayList<Document>();
+     //   	posts = postsCollection.find().iterator();
+        
+        FindIterable<Document> iter = postsCollection.find().sort(new BasicDBObject("date", -1)).limit(5);
+        
+        MongoCursor<Document> iterator = iter.iterator();
+        while(iterator.hasNext()) {
+        	posts.add(iterator.next()); 	
+        }
+        
         return posts;
     }
 
@@ -39,6 +54,7 @@ public class BlogPostDAO {
     public String addPost(String title, String body, List tags, String username) {
 
         System.out.println("inserting blog entry " + title + " " + body);
+        System.out.println("username = " + username);
 
         String permalink = title.replaceAll("\\s", "_"); // whitespace becomes _
         permalink = permalink.replaceAll("\\W", ""); // get rid of non alphanumeric
@@ -57,8 +73,11 @@ public class BlogPostDAO {
 
         // Build the post object and insert it
         Document post = new Document();
-
-
+        
+        post.append("title", title).append("author", username).append("body", body).append("permalink", permalink).append("tags", tags).append("comments", new ArrayList<>()).append("date", new Date());
+        
+        postsCollection.insertOne(post);
+        
         return permalink;
     }
 
@@ -68,12 +87,7 @@ public class BlogPostDAO {
     // White space to protect the innocent
 
 
-
-
-
-
-
-
+    	
     // Append a comment to a blog post
     public void addPostComment(final String name, final String email, final String body,
                                final String permalink) {
@@ -83,5 +97,16 @@ public class BlogPostDAO {
         // - email is optional and may come in NULL. Check for that.
         // - best solution uses an update command to the database and a suitable
         //   operator to append the comment on to any existing list of comments
+    	
+    	Document comments = new Document().append("author", name)
+    	        .append("body", body); 
+    	
+    	if(email != null && !email.trim().isEmpty()) {
+    		comments.append("email", email);
+    	}
+    	
+    	postsCollection.findOneAndUpdate(new BasicDBObject("permalink", permalink), Updates.addToSet("comments", comments));
+    	//collection.updateOne(eq("_id", "1"), Updates.addToSet("scores", score));  	
+    	
     }
 }
