@@ -1,0 +1,32 @@
+var items = db.grades.aggregate(
+   [
+     {
+       $group:
+         {
+           _id: "$student_id",
+           minScore: { $min: "$score" }
+         }
+     }
+   ]
+);
+     
+while(items.hasNext()) {
+   item = items.next();
+   //print(item);
+   
+   //var elem = db.grades.findOne( { $and: [{"student_id": { $eq: item._id}}, {"score": { $eq: item.minScore}}]);
+   var elem = db.grades.findOne( { $and: [ { student_id: { $eq: item._id } }, { score: { $eq: item.minScore } } ] });
+   print(elem);
+    db.grades.remove(elem);
+}    
+
+db.places.find( { location : { $near : [74,140] } }).limit(3)
+
+
+db.stores.find({ loc:{ $near: { $geometry: { type: "Point", coordinates: [-130, 39]}, $maxDistance:1000000 } } })
+
+db.system.profile.find( { millis : { $gt:1000 } } ).sort( { ts : -1 } )
+=================================================================================
+db.posts.ensureIndex({ date: -1})
+db.posts.ensureIndex({ permalink: 1}, {unique: true})
+db.posts.ensureIndex({ tags: 1})
