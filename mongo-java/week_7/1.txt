@@ -1,0 +1,9 @@
+mongorestore --port 27017 -d enron -c messages enron\messages.bson
+
+1.
+
+db.getCollection('messages').find({ $and: [{"headers.From":"andrew.fastow@enron.com"},
+                                              {"headers.To": "jeff.skilling@enron.com" }]}).count()
+
+2. 
+
