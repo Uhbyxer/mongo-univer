@@ -5,5 +5,32 @@ mongorestore --port 27017 -d enron -c messages enron\messages.bson
 db.getCollection('messages').find({ $and: [{"headers.From":"andrew.fastow@enron.com"},
                                               {"headers.To": "jeff.skilling@enron.com" }]}).count()
 
-2. 
+==================================================
+#final 7 
+
+db.images.find(
+   { tags: { $elemMatch: {"$eq":"sunrises"} } }
+).count()
+   
+db.images.find().count()   
+---------------------------------------------------
+   var images = new Array(); 
+db.albums.aggregate([
+   {
+      $unwind: "$images"
+   },
+   
+      {
+        $group : {
+           _id : "$images",
+  
+        }
+      }
+        
+]).forEach( function(img) { images.push(img._id); } );
+//printjson(images);
+
+db.images.find( { _id: { $nin: images } } ).forEach( function(img) {  db.images.remove(img) } );
+
+
 

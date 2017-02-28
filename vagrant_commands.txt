@@ -1,0 +1,16 @@
+cd  ~/Documents/m312-vagrant-env
+vagrant plugin install vagrant-vbguest
+vagrant up
+
+vagrant status
+
+sudo mkdir -p /shared
+sudo echo hello >> /shared/test.txt
+sudo chmod 777 echo hello >> ./test.txt
+
+sudo chmod 777 /shared
+sudo echo hello >> ./test.txt
+
+
+vagrant reload m312
+vagrant provision  m312

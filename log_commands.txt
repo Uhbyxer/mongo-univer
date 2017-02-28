@@ -1,0 +1,32 @@
+db.currentOp()
+db.killOp(7675)
+db.serverStatus().mem
+db.serverStatus().metrics.commands
+db.serverStatus().opcounter
+db.getProfilingLevel()
+db.setProfilingLevel(2)
+db.system.profile.count()
+
+mongo —port 30000 
+
+less /home/vagrant/data/m312RS/rs2/mongod.log
+G - go to the end
+
+less /home/vagrant/single.log
+
+cd /shared
+mongod --config single.cfg
+python singleapp.py
+
+nc -zvv localhost 27000 - test port is alive
+fuser -n tcp -k 9001 - Kill proc on port 9001
+
+
+———less————
+* CTRL+F – forward one window
+* CTRL+B – backward one window
+* CTRL+D – forward half window
+* CTRL+U – backward half window
+G - go to the end
+
+
