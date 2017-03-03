@@ -34,3 +34,31 @@ db.images.find( { _id: { $nin: images } } ).forEach( function(img) {  db.images.
 
 
 
+db.getCollection('messages').aggregate( [  
+    {$project: {from: "$headers.From", to: "$headers.To", email_id: "$_id"}}, 
+    {$unwind: "$to"},
+    {$group: {_id: "$email_id", from: {$first: "$from"}, to: {$addToSet: "$to"}}}, 
+    {$unwind: "$to"},  
+    {$group: {_id: {from: "$from", to: "$to"}, count: {$sum: 1}}},
+    {$sort : { "count" : -1 }}    
+], {allowDiskUse : true} )
+
+{
+    "_id" : {
+        "from" : "susan.mara@enron.com",
+        "to" : "jeff.dasovich@enron.com"
+    },
+    "count" : 750
+}
+
+3.
+
+db.getCollection('messages').update(
+   {"headers.Message-ID" : "<8147308.1075851042335.JavaMail.evans@thyme>"},
+   { $addToSet: {"headers.To": "mrpotatohead@mongodb.com" } }
+)
+
+vOnRg05kwcqyEFSve96R
+
+4.
+
