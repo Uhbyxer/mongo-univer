@@ -78,3 +78,35 @@ db.movies.aggregate([
       $match: { labor_of_love: true }
     }
   ]).itcount()
+
+
+  //================== lab 'cursor like stages'
+
+  var pipeline = [
+    { $match: { "tomatoes.viewer.rating" : {$gte: 3},  
+    cast: { $elemMatch: { $exists: true } },
+    "countries": { $elemMatch: { $eq: "USA" } }}},
+
+    {
+      $project: {
+             title: 1,  
+            tomatoRate:   "$tomatoes.viewer.rating",
+            num_favs: {
+               $size: { $setIntersection: ["$cast", [
+                                "Sandra Bullock",
+                                 "Tom Hanks",
+                                 "Julia Roberts",
+                                 "Kevin Spacey",
+                                  "George Clooney"]] } 
+        }
+      }
+    }
+   ,
+   {"$sort": { "num_favs": -1,  "tomatoRate": -1}},
+   { "$skip": 24  },
+   { "$limit": 1  }
+   
+];
+
+db.getCollection('movies').aggregate(pipeline)
+
