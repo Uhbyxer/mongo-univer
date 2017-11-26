@@ -169,3 +169,28 @@ var pipeline = [
 ];
 
 db.getCollection('movies').aggregate(pipeline).pretty()
+
+
+//====== group lab
+db.movies.aggregate([
+    {$match: {"awards": {$regex : ".*Oscar.*"}}},
+    
+     {$project: {
+         "imdb.rating": 1,
+          awards: 1, 
+          awards_arr: { $split: ["$awards", " "] }
+     }},
+     {$match: {"awards_arr.0": new RegExp('^Won', "i")}},
+     {$match: {"awards_arr.2": new RegExp('^Oscar', "i")}},
+    
+    
+    {
+      "$group": {
+        "_id": 0,
+        "min_rating": { "$min": "$imdb.rating" },
+        "max_rating": { "$max": "$imdb.rating" },
+        "average_rating": { "$avg": "$imdb.rating" },
+        "deviation": { "$stdDevPop": "$imdb.rating" }
+      }
+    }
+  ]).pretty()
