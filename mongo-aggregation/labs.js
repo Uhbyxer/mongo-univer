@@ -110,3 +110,62 @@ db.movies.aggregate([
 
 db.getCollection('movies').aggregate(pipeline)
 
+//======================= lab all
+var pipeline = [
+    { $match: 
+        { 
+        "imdb.rating" : {$gte: 1},
+        "imdb.votes" : {$gte: 1},  
+        "languages" : {$in: ["English"]} ,
+       "released": { $exists: true },
+       "released":     { $type : "date" }  
+    }},
+    
+    {$project: 
+        {title: 1, rated: 1, "imdb.votes": 1, "imdb.rating": 1,
+         year: { $year: "$released" },
+       
+            scaled_votes: 
+            {
+            $add: [
+            1,
+            {
+                $multiply: [
+                9,
+                {
+                    $divide: [
+                    { $subtract: ["$imdb.votes", 5] },
+                    { $subtract: [1521105, 5] }
+                    ]
+                }
+                ]
+            }
+            ]
+     }  ,
+        }
+    },
+    
+      { $match: 
+        { 
+        "year" : {$gte: 1990}
+         }  
+    },
+    
+    {
+     $project: {
+         title: 1,
+         scaled_votes: 1,
+         "imdb.votes": 1,
+         "imdb.rating": 1,
+         year: 1,
+         normalized_rating: { $avg: [ "$scaled_votes", "$imdb.rating" ] }
+     }
+   },
+   {
+      "$sort": { "normalized_rating": 1 }
+   },
+   { "$limit": 1 }
+    
+];
+
+db.getCollection('movies').aggregate(pipeline).pretty()
