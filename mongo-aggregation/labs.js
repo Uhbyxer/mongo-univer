@@ -216,3 +216,49 @@ db.movies.aggregate([
    { "$limit": 3  }
 
  ])
+
+ //======= lookup / join lab
+ db.air_alliances.aggregate([
+    {
+      "$lookup": {
+        "from": "air_airlines",
+        "localField": "airlines",
+        "foreignField": "name",
+        "as": "airlines"
+      }
+    },
+   {
+     "$unwind": "$airlines"
+   },    
+   
+    {$project: 
+        {_id: 0, aliance: "$name", airline_name: "$airlines.name", airline_code: "$airlines.airline"}
+    },
+    
+    {
+      "$lookup": {
+        "from": "air_routes",
+        "localField": "airline_name",
+        "foreignField": "airline.name",
+        "as": "routes"
+      }
+    },  
+  
+    {
+     "$unwind": "$routes"
+    },    
+   
+    { $match: { 
+        "routes.airplane" : {$in: ["380" ,"747"]} 
+    }},
+    
+     {
+        $group : {
+           _id : "$aliance",
+           numAircraft: { $sum: 1 }
+        }
+     },
+     
+     {"$sort": { "numAircraft": -1}}
+    
+  ]).pretty()
