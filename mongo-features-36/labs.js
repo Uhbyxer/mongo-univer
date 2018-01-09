@@ -65,3 +65,48 @@ db.air_alliances.aggregate([
       }
     }
   ])
+
+  ///// jsonScheme validation
+
+
+  db.createCollection("claims", {
+    validator : {
+      $jsonSchema : {
+        type: "object",
+        properties: {
+            airportCode: {type: "string", minLength: 3},
+            airlineName: {type: "string", minLength: 5},
+            claims: {type: "object"},
+            airportName: {type: "string"},
+            "claims.itemCategory": {type: "array", maxItems: 3},
+            "claims.amount": {type: "string", pattern: "^\\$", description: "pattern: started with dollar"},
+            "claims.claimType" : {},
+            "claims.claimSite": {},
+            "_id": {}    
+
+        },
+        allOf: [
+            {required: ["airportCode", "airlineName", "claims"]}
+        ],
+        additionalProperties: false  
+      }
+    }
+  }
+)
+
+
+db.claims.insert(
+    {
+        "airportCode": "ABE",
+        "airportName": "Lehigh Valley International Airport, Allentown",
+        "airlineName": "MongoAir",
+        "claims": {
+          "claimType": "Property Damage",
+          "claimSite": "Checked Baggage",
+          "itemCategory": [
+            "Sporting Equipment & Supplies"
+          ],
+          "amount": "$180.00"
+        }
+      }
+);
